@@ -54,17 +54,19 @@ Sections Table<br>
 <br>
 
 Subsections Table<br>
-|:--:|:---:|:---:|
+
 | Column |	Type |	Description |
+|:--:|:---:|:---:|
 |subsection_id |	int AI PK	| Auto-incremented primary key |
 |subsection_name	| varchar(255)	| Name of the subsection |
 | project_id	| int |	Foreign key referencing 'projects'|
 |section_id |	int	| Foreign key referencing 'sections'|
 
 <br>
-Subsections Table<br>
-|:--:|:---:|:---:|
+Subsections Table
+
 | Column |	Type |	Description |
+|:--:|:---:|:---:|
 |document_id	| int AI PK |	Auto-incremented primary key |
 |document_name	| varchar(255) |	Name of the document |
 |subsection_id |	int	| Foreign key | referencing 'subsections' |
