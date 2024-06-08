@@ -1,6 +1,6 @@
 # Project_Master_List
 
-### Table of Contents
+## Table of Contents
 - [Description](#description)
 - [Features](#features)
 - [Prerequisites](#prerequisites)
@@ -12,7 +12,7 @@
 ### Description
 This project is a comprehensive project management system built using ReactJS for the front-end, Node.js with Express as the middleware, and MySQL as the backend database. The system allows users to manage projects, sections, subsections, and documents efficiently, providing functionalities such as adding, deleting, updating, and searching documents. The UI includes an accordion interface for better navigation and a custom progress bar for tracking the progress of documents.<br>
 
-###Features
+Features
 1. Project Management:
    - Add and delete projects.
    - Onclick event to open project details.
@@ -26,14 +26,14 @@ This project is a comprehensive project management system built using ReactJS fo
    - Display detailed information about documents, including start and end dates, status, priority, assigned personnel, and progress.
      <br>
 
-##Prerequisites<br>
+Prerequisites<br>
  * Frontend: ReactJS
  * Backend: Node.js, Express
  * Database: MySQL
  * Editor: Visual Studio Code
  * Database Management Tool: MySQL Workbench
 <br>
-###Database Schema<br>
+Database Schema<br>
 Projects Table
 
 | Column |	Type |	Description |
@@ -54,7 +54,7 @@ Sections Table<br>
 <br>
 
 Subsections Table<br>
-
+|:--:|:---:|:---:|
 | Column |	Type |	Description |
 |subsection_id |	int AI PK	| Auto-incremented primary key |
 |subsection_name	| varchar(255)	| Name of the subsection |
@@ -63,7 +63,7 @@ Subsections Table<br>
 
 <br>
 Subsections Table<br>
-
+|:--:|:---:|:---:|
 | Column |	Type |	Description |
 |document_id	| int AI PK |	Auto-incremented primary key |
 |document_name	| varchar(255) |	Name of the document |
@@ -78,7 +78,7 @@ Subsections Table<br>
 |assigned_to	| varchar(255)	| Person assigned to the 'document'|
 |progress |	int |	Progress of the document |
 <br>
-###**Installation**<br>
+**Installation**<br>
 Step 1: Clone the Repository<br>
 git clone [https://github.com/your-username/project-management-system.git<br>
 ](https://github.com/VivekKavitake/Project_Master_List.git)
@@ -115,7 +115,7 @@ npm install<br>
 cd ../frontend<br>
 npm start<br>
 
- ###**Usage**
+ **Usage**
  - Add a Project: Use the UI to add a new project.
  - View Project Details: Click on a project to view its details.
  - Manage Sections and Subsections: Use the accordion UI to add, update, or delete sections and subsections.
@@ -123,7 +123,7 @@ npm start<br>
  - Search Documents: Use the search functionality to find documents across different sections.
  - Dynamic Progress Bar: Update document progress and see the progress bar update in real-time.
 
-###**Technologies Used**
+**Technologies Used**
 - Frontend: React.js
 - Backend: Node.js with Express
 - Database: MySQL
