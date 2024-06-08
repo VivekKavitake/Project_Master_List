@@ -29,9 +29,8 @@ This project is a comprehensive project management system built using ReactJS fo
 | Column |	Type |	Description |
 |:--:|:---:|:---:|
 |project_id	|int AI PK |	Auto-incremented primary key |
-|:--:|:---:|:---:|
 |project_name |	varchar(255) |	Name of the project |
-|:--:|:---:|:---:|
+
 <br>
 
 ##Sections Table<br>
