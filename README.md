@@ -12,19 +12,14 @@
 ### Description
 This project is a comprehensive project management system built using ReactJS for the front-end, Node.js with Express as the middleware, and MySQL as the backend database. The system allows users to manage projects, sections, subsections, and documents efficiently, providing functionalities such as adding, deleting, updating, and searching documents. The UI includes an accordion interface for better navigation and a custom progress bar for tracking the progress of documents.<br>
 
-Features
-1. Project Management:
-   - Add and delete projects.
-   - Onclick event to open project details.
-2. Section, Subsection, and Document Management:
-   - UI with an accordion for sections, subsections, and documents.
-   - CRUD operations for documents.
-   - Custom progress bar that dynamically updates based on numerical input.
-3. Search Functionality:
-   - Search documents across different sections.
-4. Document Details Table:
-   - Display detailed information about documents, including start and end dates, status, priority, assigned personnel, and progress.
-     <br>
+### Features
+1. **Project Management**: Add and delete projects.
+2. **Project Details**: Onclick event to open and view project details.
+3. **Accordion UI**: Dynamic accordion interface for managing sections, subsections, and documents.
+4. **Document Search**: Search functionality to fetch documents from different sections.
+5. **CRUD Operations**: Add, read, update, and delete documents.
+6. **Document Table**: Detailed table view for documents.
+7. **Progress Bar**: Custom progress bar that dynamically updates based on numerical input.
 
 Prerequisites<br>
  * Frontend: ReactJS
