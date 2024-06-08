@@ -23,7 +23,7 @@ This project is a comprehensive project management system built using ReactJS fo
 
 Prerequisites<br>
  * Frontend: ReactJS
- * Backend: Node.js, Express
+ * Backend middleware: Node.js, Express
  * Database: MySQL
  * Editor: Visual Studio Code
  * Database Management Tool: MySQL Workbench
