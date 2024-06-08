@@ -1,0 +1,60 @@
+/* src/styles/Home.css */
+.home {
+  padding: 25px;
+  margin: 10px;
+  background-color: #f8f8f8; /* Shade of white */
+  border-radius: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid #040404;
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+button {
+  display: inline-block;
+  margin: 10px 0;
+  padding: 10px 20px;
+  background-color: #e0e0e0; /* Light gray */
+  border: 2px solid #b0b0b0; /* Darker gray border */
+  color: #333;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+button:hover {
+  background-color: #d0d0d0; /* Slightly darker shade */
+  color: #000;
+}
+
+button:active {
+  background-color: #c0c0c0; /* Even darker shade */
+  color: #000;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+table, th, td {
+  border: 1px solid #ddd;
+}
+
+th, td {
+  padding: 15px;
+  text-align: left;
+  background-color: #fff; /* White background for table cells */
+}
+
+th {
+  background-color: #f0f0f0; /* Light gray background for headers */
+  color: #333;
+}
