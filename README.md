@@ -75,9 +75,12 @@ Subsections Table
 |assigned_to	| varchar(255)	| Person assigned to the 'document'|
 |progress |	int |	Progress of the document |
 <br>
-**Installation**<br>
+
+**Installation**
+<br>
 Step 1: Clone the Repository<br>
 git clone https://github.com/VivekKavitake/Project_Master_List.git<br>
+
 **Step 2: Navigate to the Project Directory**<br>
 cd Project_Master_List
 <br>
