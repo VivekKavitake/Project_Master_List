@@ -134,3 +134,33 @@ exports.deleteDocument = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
+// Controller function to fetch documents by project ID
+exports.getDocumentsByProjectId = async (req, res) => {
+    const projectId = req.params.projectId;
+
+    try {
+        const query = `
+            SELECT 
+                document_id, subsection_id, section_id, progress
+            FROM 
+                documents 
+            WHERE 
+                project_id = ?
+        `;
+
+        const [results] = await db.query(query, [projectId]);
+
+        // Format dates
+        const formattedResults = results.map(document => ({
+            ...document,
+            start_date: document.start_date ? new Date(document.start_date).toISOString().split('T')[0] : null,
+            end_date: document.end_date ? new Date(document.end_date).toISOString().split('T')[0] : null
+        }));
+
+        res.json(formattedResults);
+    } catch (error) {
+        console.error('Error fetching documents:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};

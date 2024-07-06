@@ -22,9 +22,9 @@ exports.getProjectById = async (req, res) => {
 };
 
 exports.createProject = async (req, res) => {
-    const { project_name } = req.body;
+    const { project_name, client, contractor, consultant, title} = req.body;
     try {
-        const [results] = await db.query('INSERT INTO projects (project_name) VALUES (?)', [project_name]);
+        const [results] = await db.query('INSERT INTO projects (project_name, client, contractor, consultant, title) VALUES (?, ?, ?, ?, ?)', [project_name, client, contractor, consultant, title]);
         res.status(201).json({ project_id: results.insertId, project_name });
     } catch (err) {
         console.error("Error creating project:", err);

@@ -29,5 +29,7 @@ router.get('/subsections/:subsectionId/documents', documentsController.getDocume
 router.post('/documents', documentsController.createDocument);
 router.put('/documents/:documentId', documentsController.updateDocument);
 router.delete('/documents/:documentId/:subsectionId', documentsController.deleteDocument);
+router.get('/projects/:projectId/documents', documentsController.getDocumentsByProjectId);// new route to fetch documents by project ID
+
 
 module.exports = router;

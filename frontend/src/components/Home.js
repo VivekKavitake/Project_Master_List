@@ -1,4 +1,3 @@
-// src/components/Home.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ProjectTable from './ProjectTable';
@@ -13,8 +12,8 @@ const Home = () => {
     fetchProjects();
   }, []);
 
-   // Function to capitalize the first letter of a string
-   const capitalizeFirstLetter = (str) => {
+  // Function to capitalize the first letter of a string
+  const capitalizeFirstLetter = (str) => {
     return str.charAt(0).toUpperCase() + str.slice(1);
   };
 
@@ -29,10 +28,16 @@ const Home = () => {
     }
   };
 
-  const addProject = async (projectName) => {
+  const addProject = async (projectData) => {
     try {
-      const capitalizedProjectName = capitalizeFirstLetter(projectName); // Capitalize project name
-      const newProjectData = { project_name: capitalizedProjectName }; // Use the capitalized project name in the request data
+      console.log('Received project name:', projectData); // Log the received project name
+      const capitalizedProjectName = capitalizeFirstLetter(projectData.projectName);
+      const capitalizedclient = capitalizeFirstLetter(projectData.client);
+      const capitalizedcontractor = capitalizeFirstLetter(projectData.contractor);
+      const capitalizedconsultant = capitalizeFirstLetter(projectData.consultant);
+      const capitalizedtitle = capitalizeFirstLetter(projectData.title);
+
+      const newProjectData = { project_name: capitalizedProjectName,client: capitalizedclient,contractor: capitalizedcontractor, consultant: capitalizedconsultant, title : capitalizedtitle };
       console.log('Adding new project:', newProjectData);
       const response = await axios.post('http://localhost:5000/api/projects', newProjectData);
       const newProject = response.data;
@@ -43,6 +48,7 @@ const Home = () => {
       console.error('Error adding project:', error);
     }
   };
+  
 
   const deleteProject = async (projectId) => {
     try {

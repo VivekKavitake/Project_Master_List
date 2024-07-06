@@ -6,7 +6,7 @@ body {
   color: #333;
 }
 
-.project-detail{
+.project-detail {
   border: 2px solid #333;
   max-width: 1100px;
   margin: 15px auto;
@@ -20,7 +20,8 @@ body {
   padding: 15px;
 }
 
-h1, h2 {
+h1,
+h2 {
   text-align: center;
   color: #333;
   margin-top: 10px;
@@ -31,7 +32,10 @@ h1, h2 {
   margin-bottom: 20px;
 }
 
-.back-button, .add-button, .delete-button {
+.back-button,
+.add-button,
+.delete-button,
+.export-button {
   background-color: #fff;
   color: #333;
   border: 1px solid #ccc;
@@ -45,7 +49,10 @@ h1, h2 {
   margin: 10px 0;
 }
 
-.back-button:hover, .add-button:hover, .delete-button:hover {
+.back-button:hover,
+.add-button:hover,
+.delete-button:hover,
+.export-button:hover {
   background-color: #e5e5e5;
 }
 
@@ -64,7 +71,8 @@ h1, h2 {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.section-name, .subsection-name {
+.section-name,
+.subsection-name {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -77,7 +85,8 @@ h1, h2 {
   font-size: 16px; /* Increased font size for better readability */
 }
 
-.add-button, .delete-button {
+.add-button,
+.delete-button {
   font-size: 14px; /* Increased font size for buttons */
   padding: 8px 12px; /* Increased padding for buttons */
 }
@@ -91,11 +100,13 @@ h1, h2 {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.subsection-container, .document-container {
+.subsection-container,
+.document-container {
   margin-left: 25px; /* Increased margin left for subsections and documents */
 }
 
-.subsection-container.hidden, .document-container.hidden {
+.subsection-container.hidden,
+.document-container.hidden {
   display: none;
 }
 
@@ -172,7 +183,8 @@ h1, h2 {
 .form-actions button:hover {
   background-color: #f3f3f3;
 }
-.edit-button, .delete-button {
+.edit-button,
+.delete-button {
   background-color: #fff;
   color: #333;
   border: 1px solid #ccc;
@@ -182,7 +194,8 @@ h1, h2 {
   transition: background-color 0.3s, color 0.3s, border-color 0.3s;
 }
 
-.edit-button:hover, .delete-button:hover {
+.edit-button:hover,
+.delete-button:hover {
   background-color: #f9f9f9; /* Lighter shade of white on hover */
   color: #555; /* Darker shade of text color on hover */
   border-color: #999; /* Darker shade of border color on hover */
@@ -300,4 +313,23 @@ h1, h2 {
 .separator {
   margin: 0 8px; /* Space between breadcrumbs */
   color: #666; /* Medium grey text color */
+}
+
+.project-meta-hero {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.project-meta {
+  flex: 1;
+  margin: 2px auto;
+  padding: 2px;
+  width: 50px;
+}
+.project-hero {
+  flex: 1;
+  margin: 2px auto;
+  padding: 2px;
+  width: 100px;
 }
