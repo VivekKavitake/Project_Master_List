@@ -2,15 +2,22 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import ProgressBar from './Progressbar'; // Import the custom progress bar component
-import fetchProjectName from '../utils/fetchProjectName';
 import '../styles/ProjectDetail.css';
 import { format, parseISO } from 'date-fns'; // Importing functions from date-fns
 
-  const ProjectDetail = () => {
+import { exportToExcel } from '../utils/exportToExcel'; // Adjust the path based on your directory structure
+
+const ProjectDetail = () => {
   const { projectId } = useParams();
   const navigate = useNavigate();
 
-  const [projectName, setProjectName] = useState('');
+  const [projectDetails, setProjectDetails] = useState({
+    projectName: '',
+    client: '',
+    contractor: '',
+    consultant: '',
+    title: ''
+  });
   const [sections, setSections] = useState([]);
   const [newSectionName, setNewSectionName] = useState('');
   const [newSubsectionName, setNewSubsectionName] = useState('');
@@ -22,10 +29,15 @@ import { format, parseISO } from 'date-fns'; // Importing functions from date-fn
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [newDocumentName, setNewDocumentName] = useState('');
   const [editingDocument, setEditingDocument] = useState(null);
+  const [documents, setDocuments] = useState([]);
 
   // Define searchTerm, handleSearchChange, and searchResults here
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
+
+  //Define State for overall progress
+  const [overallProgress, setOverallProgress] = useState('0'); // State for overall progress
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,7 +51,27 @@ import { format, parseISO } from 'date-fns'; // Importing functions from date-fn
       }
     };
     fetchData();
+    fetchDocuments();
   }, [projectId]);
+
+  // Calculate overall progress whenever documents change
+  useEffect(() => {
+    const calculateOverallProgress = () => {
+      if (documents.length === 0) {
+        return '0'; // No documents, no progress
+      }
+
+      const validDocuments = documents.filter(document => typeof document.progress === 'number' && !isNaN(document.progress));
+
+      if (validDocuments.length === 0) {
+        return '0'; // No valid progress values found
+      }
+      const totalProgress = validDocuments.reduce((sum, document) => sum + document.progress, 0);
+      const averageProgress = totalProgress / validDocuments.length;
+      return averageProgress.toFixed(2); // Average progress
+    };
+    setOverallProgress(calculateOverallProgress());
+  }, [documents]);
 
   const capitalizeFirstLetter = (str) => {
     return str.charAt(0).toUpperCase() + str.slice(1);
@@ -47,8 +79,15 @@ import { format, parseISO } from 'date-fns'; // Importing functions from date-fn
 
   const fetchProjectDetails = async () => {
     try {
-      const projectName = await fetchProjectName(projectId);
-      setProjectName(capitalizeFirstLetter(projectName));
+      const response = await axios.get(`http://localhost:5000/api/projects/${projectId}`);
+      const projectData = response.data;
+      setProjectDetails({
+        projectName: capitalizeFirstLetter(projectData.project_name),
+        client: projectData.client,
+        contractor: projectData.contractor,
+        consultant: projectData.consultant,
+        title: projectData.title
+      });
       await fetchSections(Number(projectId));
       return true;
     } catch (error) {
@@ -77,9 +116,7 @@ import { format, parseISO } from 'date-fns'; // Importing functions from date-fn
 
   const refetchProjectDetails = async () => {
     try {
-      const projectName = await fetchProjectName(projectId);
-      setProjectName(capitalizeFirstLetter(projectName));
-      await fetchSections(Number(projectId));
+      await fetchProjectDetails();
     } catch (error) {
       console.error('Error refetching project details:', error);
     }
@@ -201,6 +238,7 @@ import { format, parseISO } from 'date-fns'; // Importing functions from date-fn
   const handleChange = (e) => {
     const { name, value } = e.target;
     setEditingDocument({ ...editingDocument, [name]: value });
+    refetchProjectDetails(); // Refetch project details
   };
 
   const handleBack = () => {
@@ -213,6 +251,19 @@ import { format, parseISO } from 'date-fns'; // Importing functions from date-fn
 
   const toggleSection = (sectionId) => {
     setCurrentSectionId(currentSectionId === sectionId ? null : sectionId); // Toggle current section ID
+  };
+
+
+  const fetchDocuments = async () => {
+    try {
+      console.log('Fetching documents for project:', projectId);
+      const response = await axios.get(`http://localhost:5000/api/projects/${projectId}/documents`);
+      console.log('Fetched documents:', response.data);
+      setDocuments(response.data);
+    } catch (error) {
+      console.error('Error fetching documents:', error);
+    }
+    refetchProjectDetails();
   };
 
   // Filter documents based on the search term
@@ -245,6 +296,7 @@ import { format, parseISO } from 'date-fns'; // Importing functions from date-fn
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
+    refetchProjectDetails(); // Refetch project details
   };
 
   const renderDocuments = (documents, subsectionId) => {
@@ -252,34 +304,34 @@ import { format, parseISO } from 'date-fns'; // Importing functions from date-fn
       <>
         {documents.map((document) => (
           <li key={document.document_id}>
-            <div className='document-dispaly'>
-            <div className="document-item">
-              <span className="document-name">{document.serial_number}-{document.document_name}</span>
-              <button onClick={() => handleEditDocument(document)}>Edit</button>
-              <button onClick={() => handleDeleteDocument(document.document_id, subsectionId)}>Delete</button>
-            </div>
-            <table className="document-details-table">
-              <tbody>
-                <tr>
-                  <th>Start Date</th>
-                  <td>{document.start_date ? format(parseISO(document.start_date), 'yyyy-MM-dd') : 'N/A'}</td>
-                  <th>End Date</th>
-                  <td>{document.end_date ? format(parseISO(document.end_date), 'yyyy-MM-dd') : 'N/A'}</td>
-                </tr>
-                <tr>
-                  <th>Status</th>
-                  <td>{document.status || 'N/A'}</td>
-                  <th>Priority</th>
-                  <td>{document.priority || 'N/A'}</td>
-                </tr>
-                <tr>
-                  <th>Assigned To</th>
-                  <td>{document.assigned_to || 'N/A'}</td>
-                  <th>Progress</th>
-                  <td><ProgressBar progress={document.progress || 0} /></td>
-                </tr>
-              </tbody>
-            </table>
+            <div className='document-display'>
+              <div className="document-item">
+                <span className="document-name">{document.serial_number}-{document.document_name}</span>
+                <button onClick={() => handleEditDocument(document)}>Edit</button>
+                <button onClick={() => handleDeleteDocument(document.document_id, subsectionId)}>Delete</button>
+              </div>
+              <table className="document-details-table">
+                <tbody>
+                  <tr>
+                    <th>Start Date</th>
+                    <td>{document.start_date ? format(parseISO(document.start_date), 'yyyy-MM-dd') : 'N/A'}</td>
+                    <th>End Date</th>
+                    <td>{document.end_date ? format(parseISO(document.end_date), 'yyyy-MM-dd') : 'N/A'}</td>
+                  </tr>
+                  <tr>
+                    <th>Status</th>
+                    <td>{document.status || 'N/A'}</td>
+                    <th>Priority</th>
+                    <td>{document.priority || 'N/A'}</td>
+                  </tr>
+                  <tr>
+                    <th>Assigned To</th>
+                    <td>{document.assigned_to || 'N/A'}</td>
+                    <th>Progress</th>
+                    <td><ProgressBar progress={document.progress || 0} /></td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </li>
         ))}
@@ -287,10 +339,31 @@ import { format, parseISO } from 'date-fns'; // Importing functions from date-fn
     );
   };
 
+  //Export to Excel format
+  const handleDownloadExcel = () => {
+    exportToExcel(projectDetails, sections);
+  };
+
   return (
     <div className="project-detail">
       <h1 style={{ textAlign: "center" }}>Project Details</h1>
-      <h2 className="project-title">Project Title: {projectName}</h2>
+      <div className='project-meta-hero'>
+        <div className="project-meta">
+          <h2 className="project-title">Project Name: {projectDetails.projectName}</h2>
+          <h3 className="project-title">Client: {projectDetails.client}</h3>
+          <h3 className="project-title">Contractor: {projectDetails.contractor}</h3>
+          <h3 className="project-title">Consultant: {projectDetails.consultant}</h3>
+          <h3 className="project-title">Title: {projectDetails.title}</h3>
+        </div>
+        <div className='project-hero'>
+          <h3 style={{ textAlign: 'center' }}>Progress of Project</h3>
+          <div className="progress-bar-container">
+            <div className="progress-bar" style={{ width: `${overallProgress}%` }}>
+              <div className="progress-text">{`${overallProgress}%`}</div>
+            </div>
+          </div>
+        </div>
+      </div>
       <button onClick={handleBack} className="back-button">Back</button>
       <input
         type="text"
@@ -314,85 +387,85 @@ import { format, parseISO } from 'date-fns'; // Importing functions from date-fn
             </li>
           ))
         ) : (
-        <div className="sections-container">
-          <div className="sections-controls">
-            <button onClick={() => setIsSectionModalOpen(true)} className="add-button">Add Section</button>
-          </div>
-          {sections.length > 0 ? (
-            sections.map(section => (
-              <div key={section.section_id} className="section">
-                <button className="section-name" onClick={() => toggleSection(section.section_id)}>
-                  {section.section_name}
-                  <button className="delete-button" onClick={() => handleDeleteSection(section.section_id)}>Delete</button>
-                </button>
-                <button onClick={() => { setCurrentSectionId(section.section_id); setIsSubsectionModalOpen(true); }} className="add-button">Add Subsection</button>
+          <div className="sections-container">
+            <div className="sections-controls">
+              <button onClick={() => setIsSectionModalOpen(true)} className="add-button">Add Section</button>
+            </div>
+            {sections.length > 0 ? (
+              sections.map(section => (
+                <div key={section.section_id} className="section">
+                  <button className="section-name" onClick={() => toggleSection(section.section_id)}>
+                    {section.section_name}
+                    <button className="delete-button" onClick={() => handleDeleteSection(section.section_id)}>Delete</button>
+                  </button>
+                  <button onClick={() => { setCurrentSectionId(section.section_id); setIsSubsectionModalOpen(true); }} className="add-button">Add Subsection</button>
 
-                <div className={currentSectionId === section.section_id ? "subsection-container show" : "subsection-container hidden"}>
-                  {section.subsections.length > 0 ? (
-                    section.subsections.map(subsection => (
-                      <div key={subsection.subsection_id} className="subsection">
-                        <button className="subsection-name" onClick={() => toggleSubsection(subsection.subsection_id)}>
-                          {subsection.subsection_name}
-                          <button className="delete-button" onClick={() => handleDeleteSubsection(subsection.subsection_id)}>Delete</button>
-                        </button>
-                        <button onClick={() => { setCurrentSubsectionId(subsection.subsection_id); setIsDocumentModalOpen(true); }} className="add-button">Add Document</button>
+                  <div className={currentSectionId === section.section_id ? "subsection-container show" : "subsection-container hidden"}>
+                    {section.subsections.length > 0 ? (
+                      section.subsections.map(subsection => (
+                        <div key={subsection.subsection_id} className="subsection">
+                          <button className="subsection-name" onClick={() => toggleSubsection(subsection.subsection_id)}>
+                            {subsection.subsection_name}
+                            <button className="delete-button" onClick={() => handleDeleteSubsection(subsection.subsection_id)}>Delete</button>
+                          </button>
+                          <button onClick={() => { setCurrentSubsectionId(subsection.subsection_id); setIsDocumentModalOpen(true); }} className="add-button">Add Document</button>
 
-                        <div className={currentSubsectionId === subsection.subsection_id ? "document-container show" : "document-container hidden"}>
-                          {subsection.documents.length > 0 ? (
-                            subsection.documents.map(document => (
-                              <div key={document.document_id} className="document">
-                                <ul>
-                                  <li>{document.serial_number}-{document.document_name}</li>
-                                </ul>
-                                <table>
-                                  <tbody>
-                                    <tr>
-                                      <th>Start Date</th>
-                                      <td>{document.start_date || 'NA'}</td>
-                                      <th>End Date</th>
-                                      <td>{document.end_date || 'NA'}</td>
-                                    </tr>
-                                    <tr>
-                                      <th>Status</th>
-                                      <td>{document.status || 'NA'}</td>
-                                      <th>Priority</th>
-                                      <td>{document.priority || 'NA'}</td>
-                                    </tr>
-                                    <tr>
-                                      <th>Assigned To</th>
-                                      <td>{document.assigned_to || 'NA'}</td>
-                                      <th>% Completed</th>
-                                      <td>
-                                        {document.progress !== null ? (
-                                          <ProgressBar progress={document.progress} />
-                                        ) : (
-                                          'NA'
-                                        )}
-                                      </td>
-                                    </tr>
-                                  </tbody>
-                                </table>
-                                <button className="edit-button" onClick={() => handleEditDocument(document)}>Edit</button>
-                                <button className="delete-button" onClick={() => handleDeleteDocument(document.document_id, subsection.subsection_id)}>Delete</button>
-                              </div>
-                            ))
-                          ) : (
-                            <p>No documents available.</p>
-                          )}
+                          <div className={currentSubsectionId === subsection.subsection_id ? "document-container show" : "document-container hidden"}>
+                            {subsection.documents.length > 0 ? (
+                              subsection.documents.map(document => (
+                                <div key={document.document_id} className="document">
+                                  <ul>
+                                    <li>{document.serial_number}-{document.document_name}</li>
+                                  </ul>
+                                  <table>
+                                    <tbody>
+                                      <tr>
+                                        <th>Start Date</th>
+                                        <td>{document.start_date || 'NA'}</td>
+                                        <th>End Date</th>
+                                        <td>{document.end_date || 'NA'}</td>
+                                      </tr>
+                                      <tr>
+                                        <th>Status</th>
+                                        <td>{document.status || 'NA'}</td>
+                                        <th>Priority</th>
+                                        <td>{document.priority || 'NA'}</td>
+                                      </tr>
+                                      <tr>
+                                        <th>Assigned To</th>
+                                        <td>{document.assigned_to || 'NA'}</td>
+                                        <th>% Completed</th>
+                                        <td>
+                                          {document.progress !== null ? (
+                                            <ProgressBar progress={document.progress} />
+                                          ) : (
+                                            'NA'
+                                          )}
+                                        </td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                  <button className="edit-button" onClick={() => handleEditDocument(document)}>Edit</button>
+                                  <button className="delete-button" onClick={() => handleDeleteDocument(document.document_id, subsection.subsection_id)}>Delete</button>
+                                </div>
+                              ))
+                            ) : (
+                              <p>No documents available.</p>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    ))
-                  ) : (
-                    <p>No subsections available.</p>
-                  )}
+                      ))
+                    ) : (
+                      <p>No subsections available.</p>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))
-          ) : (
-            <p>No sections available.</p>
-          )}
-        </div>
-      )}
+              ))
+            ) : (
+              <p>No sections available.</p>
+            )}
+          </div>
+        )}
       </ul>
 
       {isSectionModalOpen && (
@@ -427,8 +500,8 @@ import { format, parseISO } from 'date-fns'; // Importing functions from date-fn
             <div className="modal-content">
               <h2>Add Document</h2>
               <input type="text" value={newDocumentName} onChange={(e) => setNewDocumentName(e.target.value)} placeholder="Document Name" required />
-                <button onClick={handleSubmitDocument}>Add</button>
-                <button onClick={() => setIsDocumentModalOpen(false)}>Cancel</button>
+              <button onClick={handleSubmitDocument}>Add</button>
+              <button onClick={() => setIsDocumentModalOpen(false)}>Cancel</button>
             </div>
           </div>
         </div>
@@ -490,8 +563,11 @@ import { format, parseISO } from 'date-fns'; // Importing functions from date-fn
           </div>
         </div>
       )}
+      <button onClick={handleDownloadExcel} className="download-excel-button">
+        Export to Excel
+      </button>
     </div>
   );
-}; 
+};
 
 export default ProjectDetail;
