@@ -62,7 +62,7 @@ const ProjectDetail = () => {
       }
 
       const validDocuments = documents.filter(document => typeof document.progress === 'number' && !isNaN(document.progress));
-
+      console.log('Valid documents:', validDocuments);
       if (validDocuments.length === 0) {
         return '0'; // No valid progress values found
       }
@@ -70,7 +70,9 @@ const ProjectDetail = () => {
       const averageProgress = totalProgress / validDocuments.length;
       return averageProgress.toFixed(2); // Average progress
     };
+
     setOverallProgress(calculateOverallProgress());
+
   }, [documents]);
 
   const capitalizeFirstLetter = (str) => {
